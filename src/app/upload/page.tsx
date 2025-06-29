@@ -4,6 +4,16 @@ import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import Papa, { ParseResult } from 'papaparse';
 
+type CsvRow = {
+  zip_code: string;
+  manufacturer?: string;
+  product_type: string;
+  quantity_kg: string;
+  price_per_ton: string;
+  certification?: string;
+  source?: string;
+};
+
 export default function UploadPage() {
   const [message, setMessage] = useState('');
 
@@ -11,15 +21,15 @@ export default function UploadPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    Papa.parse(file, {
+    Papa.parse<CsvRow>(file, {
       header: true,
       skipEmptyLines: true,
-      complete: async (results: ParseResult<any>) => {
+      complete: async (results: ParseResult<CsvRow>) => {
         const cleanedData = results.data.map((row) => ({
           zip_code: row.zip_code,
           manufacturer: row.manufacturer || null,
           product_type: row.product_type,
-          quantity_kg: parseInt(row.quantity_kg),
+          quantity_kg: parseInt(row.quantity_kg, 10),
           price_per_ton: parseFloat(row.price_per_ton),
           certification: row.certification || null,
           source: row.source || null,
@@ -45,4 +55,3 @@ export default function UploadPage() {
     </div>
   );
 }
-
