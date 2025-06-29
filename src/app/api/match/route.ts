@@ -19,6 +19,7 @@ export async function GET() {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const matches: any[] = [];
 
   for (const sub of subscriptions) {
